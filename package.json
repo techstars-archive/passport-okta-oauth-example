@@ -14,6 +14,10 @@
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.0",
     "passport": "~0.3.2",
-    "passport-okta-oauth": "git://github.com/techstars/passport-okta-oauth.git#e749f7a"
+    "passport-okta-oauth": "git://github.com/techstars/passport-okta-oauth.git#e749f7a",
+    "express-session": "~1.15.0",
+    "request": "~2.79.0",
+    "nconf": "~0.8.4",
+    "req-flash": "0.0.3"
   }
 }

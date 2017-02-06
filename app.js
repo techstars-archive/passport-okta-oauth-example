@@ -4,9 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var passport = require('./config/passport');
+var flash = require('req-flash');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var authentication = require('./routes/authentication');
 
 var app = express();
 
@@ -21,9 +25,29 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'pickle juice',
+  resave: false,
+  saveUninitialized: true
+}));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
+function authenticateRoute (req, res, next) {
+  console.log('authenticateRoute ' + req.url);
+
+  if(!req.session || !req.session.passport) {
+    console.log("Unautenticated session");
+    res.redirect("/");
+  } else {
+    next();
+  }
+}
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/users', authenticateRoute, users);
+app.use('/auth', authentication);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -42,5 +66,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 module.exports = app;
